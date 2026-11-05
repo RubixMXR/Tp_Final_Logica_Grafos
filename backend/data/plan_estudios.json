@@ -1,0 +1,48 @@
+{
+  "carrera": "Ingeniería en Sistemas de Información (UTN)",
+  "fuente": "Plan de estudios provisto por la cátedra (PDF). Correlatividades reconstruidas a partir del plan oficial UTN-ISI; verificar con la regional.",
+  "materias": [
+    {"id": "AMI",   "nombre": "Análisis Matemático I",                "nivel": 1, "horas": 5, "dificultad": 6, "correlativas": []},
+    {"id": "AGA",   "nombre": "Álgebra y Geometría Analítica",         "nivel": 1, "horas": 5, "dificultad": 6, "correlativas": []},
+    {"id": "MD",    "nombre": "Matemática Discreta",                   "nivel": 1, "horas": 3, "dificultad": 4, "correlativas": []},
+    {"id": "SYO",   "nombre": "Sistemas y Organizaciones (Integradora)","nivel": 1, "horas": 3, "dificultad": 4, "correlativas": []},
+    {"id": "AED",   "nombre": "Algoritmo y Estructuras de Datos",      "nivel": 1, "horas": 5, "dificultad": 7, "correlativas": []},
+    {"id": "AC",    "nombre": "Arquitectura de Computadoras",          "nivel": 1, "horas": 4, "dificultad": 5, "correlativas": []},
+    {"id": "FIS1",  "nombre": "Física I",                              "nivel": 1, "horas": 5, "dificultad": 5, "correlativas": []},
+    {"id": "ING1",  "nombre": "Inglés I",                              "nivel": 1, "horas": 2, "dificultad": 2, "correlativas": []},
+
+    {"id": "QUI",   "nombre": "Química",                               "nivel": 2, "horas": 3, "dificultad": 4, "correlativas": ["FIS1"]},
+    {"id": "AMII",  "nombre": "Análisis Matemático II",                "nivel": 2, "horas": 5, "dificultad": 7, "correlativas": ["AMI", "AGA"]},
+    {"id": "FIS2",  "nombre": "Física II",                             "nivel": 2, "horas": 5, "dificultad": 6, "correlativas": ["FIS1", "AMI"]},
+    {"id": "ADS",   "nombre": "Análisis de Sistemas (Integradora)",    "nivel": 2, "horas": 6, "dificultad": 5, "correlativas": ["SYO"]},
+    {"id": "SSL",   "nombre": "Sintaxis y Semántica de los Lenguajes", "nivel": 2, "horas": 4, "dificultad": 5, "correlativas": ["AED", "MD"]},
+    {"id": "PDP",   "nombre": "Paradigmas de Programación",            "nivel": 2, "horas": 4, "dificultad": 6, "correlativas": ["AED"]},
+    {"id": "SO",    "nombre": "Sistemas Operativos",                   "nivel": 2, "horas": 4, "dificultad": 7, "correlativas": ["AC", "AED"]},
+    {"id": "SDR",   "nombre": "Sistemas de Representación",            "nivel": 2, "horas": 3, "dificultad": 3, "correlativas": ["AGA"]},
+
+    {"id": "PYE",   "nombre": "Probabilidades y Estadísticas",         "nivel": 3, "horas": 3, "dificultad": 5, "correlativas": ["AMII"]},
+    {"id": "DIS",   "nombre": "Diseño de Sistemas (Integradora)",      "nivel": 3, "horas": 6, "dificultad": 6, "correlativas": ["ADS"]},
+    {"id": "COM",   "nombre": "Comunicaciones",                        "nivel": 3, "horas": 4, "dificultad": 6, "correlativas": ["FIS2", "AMII"]},
+    {"id": "MS",    "nombre": "Matemática Superior",                   "nivel": 3, "horas": 4, "dificultad": 7, "correlativas": ["AMII"]},
+    {"id": "GD",    "nombre": "Gestión de Datos",                      "nivel": 3, "horas": 4, "dificultad": 6, "correlativas": ["SSL", "PDP"]},
+    {"id": "IYS",   "nombre": "Ingeniería y Sociedad",                 "nivel": 3, "horas": 2, "dificultad": 2, "correlativas": ["SYO"]},
+    {"id": "ECO",   "nombre": "Economía",                              "nivel": 3, "horas": 3, "dificultad": 4, "correlativas": ["IYS"]},
+    {"id": "ING2",  "nombre": "Inglés II",                             "nivel": 3, "horas": 2, "dificultad": 2, "correlativas": ["ING1"]},
+    {"id": "ELE3",  "nombre": "Electivas Nivel 3",                     "nivel": 3, "horas": 4, "dificultad": 4, "correlativas": []},
+
+    {"id": "RI",    "nombre": "Redes de Información",                  "nivel": 4, "horas": 4, "dificultad": 7, "correlativas": ["COM", "SO"]},
+    {"id": "ADR",   "nombre": "Administración de Recursos (Integradora)","nivel": 4, "horas": 6, "dificultad": 7, "correlativas": ["DIS", "SO", "GD"]},
+    {"id": "IO",    "nombre": "Investigación Operativa",               "nivel": 4, "horas": 5, "dificultad": 7, "correlativas": ["PYE", "MS"]},
+    {"id": "SIM",   "nombre": "Simulación",                            "nivel": 4, "horas": 4, "dificultad": 6, "correlativas": ["PYE", "IO"]},
+    {"id": "ISW",   "nombre": "Ingeniería de Software",                "nivel": 4, "horas": 3, "dificultad": 6, "correlativas": ["DIS", "PDP"]},
+    {"id": "TC",    "nombre": "Teoría de Control",                     "nivel": 4, "horas": 3, "dificultad": 6, "correlativas": ["AMII", "FIS2"]},
+    {"id": "LEG",   "nombre": "Legislación",                           "nivel": 4, "horas": 2, "dificultad": 2, "correlativas": ["IYS"]},
+    {"id": "ELE4",  "nombre": "Electivas Nivel 4",                     "nivel": 4, "horas": 4, "dificultad": 4, "correlativas": []},
+
+    {"id": "PF",    "nombre": "Proyecto Final (Integradora)",          "nivel": 5, "horas": 6, "dificultad": 8, "correlativas": ["ADR", "ISW", "RI"]},
+    {"id": "IA",    "nombre": "Inteligencia Artificial",               "nivel": 5, "horas": 3, "dificultad": 7, "correlativas": ["SIM", "IO"]},
+    {"id": "AG",    "nombre": "Administración Gerencial",              "nivel": 5, "horas": 3, "dificultad": 4, "correlativas": ["ADR", "ECO"]},
+    {"id": "SG",    "nombre": "Sistemas de Gestión",                   "nivel": 5, "horas": 4, "dificultad": 5, "correlativas": ["ADR", "ISW"]},
+    {"id": "ELE5",  "nombre": "Electivas Nivel 5",                     "nivel": 5, "horas": 14,"dificultad": 5, "correlativas": []}
+  ]
+}
