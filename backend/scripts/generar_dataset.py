@@ -14,8 +14,8 @@ OUT  = BASE / "data" / "cursadas.csv"
 rng = np.random.default_rng(SEED)
 plan = json.load(open(PLAN, encoding="utf-8"))
 materias = plan["materias"]
-dificultad   = {m["id"]: m["dificultad"] for m in materias}
-por_nivel    = {n: [m for m in materias if m["nivel"] == n] for n in range(1, 6)}
+dificultad = {m["id"]: m["dificultad"] for m in materias}
+por_nivel  = {n: [m for m in materias if m["nivel"] == n] for n in range(1, 6)}
 
 filas = []
 for i in range(N_ESTUDIANTES):
@@ -31,15 +31,10 @@ for i in range(N_ESTUDIANTES):
                 continue
 
             cant_simult = int(rng.integers(2, 7))
-            if m["correlativas"]:
-                nota_corr = float(np.clip(rng.normal(promedio_previo - 0.5, 0.8), 2, 10))
-            else:
-                nota_corr = promedio_previo
             recursada = int(rng.random() < 0.15)
             aprobadas_prev = len(aprobadas)
 
             logit = ( 0.9 * (promedio_previo - 6)
-                    + 0.7 * (nota_corr - 6)
                     - 0.4 * (cant_simult - 4)
                     - 0.8 * recursada
                     + 0.05 * aprobadas_prev
@@ -62,7 +57,6 @@ for i in range(N_ESTUDIANTES):
                 "promedio_previo": round(promedio_previo, 2),
                 "cant_materias_aprobadas_previas": aprobadas_prev,
                 "cant_materias_cursando_simultaneo": cant_simult,
-                "nota_promedio_correlativas": round(nota_corr, 2),
                 "es_recursada": recursada,
                 "resultado": resultado,
             })
@@ -74,5 +68,3 @@ print(f"Filas generadas: {len(df)}")
 print(f"Estudiantes únicos: {df['estudiante_id'].nunique()}")
 print("\nDistribución de resultado:")
 print(df["resultado"].value_counts(normalize=True).round(3))
-print("\nPromedio de promedio_previo por resultado:")
-print(df.groupby("resultado")["promedio_previo"].mean().round(2))

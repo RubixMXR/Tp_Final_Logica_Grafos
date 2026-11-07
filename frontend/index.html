@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Planificador Curricular</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: system-ui, -apple-system, sans-serif;
+    margin: 0;
+    padding: 24px;
+    background: #000;
+    color: #e5e5e5;
+    min-height: 100vh;
+  }
+  h2 {
+    color: #fff;
+    margin: 0 0 20px;
+    font-weight: 600;
+    font-size: 22px;
+    letter-spacing: -0.3px;
+  }
+  .layout {
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    gap: 20px;
+  }
+  .panel {
+    background: #0a0a0a;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #262626;
+  }
+  .panel h3 {
+    margin-top: 0;
+    color: #fff;
+    font-weight: 600;
+    font-size: 15px;
+    margin-bottom: 16px;
+  }
+  label {
+    display: block;
+    margin: 16px 0 6px;
+    font-size: 13px;
+    color: #a3a3a3;
+    font-weight: 500;
+  }
+  input, textarea {
+    width: 100%;
+    padding: 9px 12px;
+    font-family: inherit;
+    font-size: 14px;
+    background: #000;
+    color: #e5e5e5;
+    border: 1px solid #262626;
+    border-radius: 8px;
+  }
+  input:focus, textarea:focus {
+    outline: none;
+    border-color: #3b82f6;
+  }
+  textarea { resize: vertical; min-height: 84px; }
+  button {
+    width: 100%;
+    margin-top: 18px;
+    padding: 11px;
+    background: #3b82f6;
+    color: #fff;
+    border: 0;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+  }
+  button:hover { background: #2563eb; }
+  .secuencia {
+    margin-top: 18px;
+    font-size: 13px;
+    max-height: 440px;
+    overflow-y: auto;
+    color: #d4d4d4;
+  }
+  .secuencia strong { color: #fff; }
+  .secuencia ol { padding-left: 22px; margin: 8px 0; }
+  .secuencia li {
+    margin: 4px 0;
+    padding: 8px 0;
+    border-bottom: 1px solid #262626;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .secuencia li button {
+    width: auto;
+    margin: 0;
+    padding: 3px 10px;
+    font-size: 11px;
+    background: #059669;
+  }
+  .secuencia li button:hover { background: #047857; }
+
+  .arista {
+    stroke: #333;
+    stroke-width: 1;
+    opacity: 0.35;
+  }
+  .arista-top {
+    stroke: #3b82f6;
+    stroke-width: 2.5;
+    opacity: 0.95;
+  }
+  .nodo text {
+    font-size: 11px;
+    fill: #fff;
+    pointer-events: none;
+    font-weight: 700;
+  }
+  .leyenda {
+    margin-top: 16px;
+    font-size: 12px;
+    color: #737373;
+    line-height: 2;
+  }
+  .gradiente {
+    display: inline-block;
+    width: 180px;
+    height: 12px;
+    vertical-align: middle;
+    border-radius: 3px;
+    background: linear-gradient(to right,
+      hsl(0, 75%, 50%),
+      hsl(30, 75%, 50%),
+      hsl(60, 75%, 50%),
+      hsl(90, 75%, 50%),
+      hsl(120, 75%, 50%));
+    margin: 0 8px;
+    border: 1px solid #262626;
+  }
+  .badge {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    vertical-align: middle;
+    margin-right: 5px;
+    border: 1px solid #262626;
+  }
+  .ayuda { font-size: 11px; color: #525252; margin-top: 6px; }
+  code {
+    background: #171717;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 12px;
+    color: #a3a3a3;
+  }
+</style>
+</head>
+<body>
+<h2>Planificador Curricular — Ingeniería en Sistemas (UTN FRRo)</h2>
+<div class="layout">
+  <div class="panel">
+    <h3>Historial del estudiante</h3>
+    <label>Notas de materias aprobadas</label>
+    <textarea id="notas">AMI:6, AGA:6, SPN:6, AED:6, ING1:6, MS:7</textarea>
+    <div class="ayuda">Formato: <code>MATERIA:NOTA</code>, separadas por coma.</div>
+
+    <label>Materias cursando simultáneo</label>
+    <input id="simult" type="number" value="3" min="1" max="10">
+
+    <label>¿Recursando alguna? (0 = No, 1 = Sí)</label>
+    <input id="recursada" type="number" min="0" max="1" value="0">
+
+    <button onclick="calcular()">Calcular secuencia</button>
+    <div class="secuencia" id="secuencia">Presioná "Calcular secuencia" para empezar.</div>
+  </div>
+
+  <div class="panel">
+    <h3>Grafo de correlatividades</h3>
+    <svg id="grafo" width="100%" height="700" viewBox="0 0 1000 800" preserveAspectRatio="xMidYMid meet"></svg>
+    <div class="leyenda">
+      <strong style="color:#e5e5e5;">Probabilidad de aprobar:</strong>
+      <span class="gradiente"></span>
+      0% → 100%
+      <br>
+      <span class="badge" style="background:#525252;"></span> Ya aprobada
+      &nbsp;&nbsp;
+      <span class="badge" style="background:#000;"></span> Bloqueada
+      <br>
+      <span style="display:inline-block;width:20px;height:2px;background:#3b82f6;vertical-align:middle;margin-right:6px;"></span>
+      Habilitadas que sirven para desbloquear otras
+      <br>
+      <em style="color:#404040;">Colores sólo en materias habilitadas. Electivas al fondo de cada nivel.</em>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = "http://127.0.0.1:8000";
+const ELECTIVAS = new Set(["ELEC3", "ELEC4", "ELEC5"]);
+let PLAN = null;
+
+function parseNotas(str) {
+  const notas = {};
+  str.split(",").forEach(par => {
+    const [mid, val] = par.split(":").map(s => s.trim());
+    if (mid && val && !isNaN(parseFloat(val))) notas[mid] = parseFloat(val);
+  });
+  return notas;
+}
+
+async function cargarPlan() {
+  try {
+    const r = await fetch(`${API}/api/plan`);
+    if (!r.ok) throw new Error("Error al cargar el plan");
+    PLAN = await r.json();
+    dibujar({}, [], []);
+  } catch (e) {
+    console.error(e);
+    document.getElementById("grafo").innerHTML =
+      `<text x="50" y="50" fill="#ef4444" font-size="20">Error conectando al backend.</text>`;
+  }
+}
+
+function colorProb(p) {
+  const clamp = Math.max(0, Math.min(1, p));
+  return `hsl(${clamp * 120}, 75%, 50%)`;
+}
+
+function esHabilitada(m, aprobadasSet) {
+  return !aprobadasSet.has(m.id) && m.correlativas.every(c => aprobadasSet.has(c));
+}
+
+function dibujar(pesos, aprobadas, secuencia) {
+  const svg = document.getElementById("grafo");
+  svg.innerHTML = "";
+  if (!PLAN) return;
+
+  const aprobadasSet = new Set(aprobadas);
+  const ancho = 1000, alto = 800;
+  const pos = {};
+
+  const porNivel = {};
+  for (const m of PLAN.materias) (porNivel[m.nivel] ||= []).push(m);
+
+  for (const n of Object.keys(porNivel)) {
+    porNivel[n].sort((a, b) => {
+      const aElec = ELECTIVAS.has(a.id) ? 1 : 0;
+      const bElec = ELECTIVAS.has(b.id) ? 1 : 0;
+      return aElec - bElec;
+    });
+  }
+
+  const niveles = Object.keys(porNivel).sort();
+  const xMin = 100, xMax = 900;
+  const dx = niveles.length > 1 ? (xMax - xMin) / (niveles.length - 1) : 0;
+
+  for (const n of niveles) {
+    const lista = porNivel[n];
+    const dy = alto / (lista.length + 1);
+    lista.forEach((m, i) => {
+      pos[m.id] = { x: xMin + dx * (Number(n) - 1), y: dy * (i + 1) };
+    });
+  }
+
+  // === Aristas ===
+  for (const m of PLAN.materias) {
+    for (const c of m.correlativas) {
+      if (!pos[c] || !pos[m.id]) continue;
+      
+      const cObj = PLAN.materias.find(x => x.id === c);
+      const cHabilitada = cObj ? esHabilitada(cObj, aprobadasSet) : false;
+      const mHabilitada = esHabilitada(m, aprobadasSet);
+      const mAprobada = aprobadasSet.has(m.id);
+      
+      // Es azul si la correlativa está habilitada Y la materia destino está bloqueada
+      const esPuente = cHabilitada && !mHabilitada && !mAprobada;
+
+      const l = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      l.setAttribute("x1", pos[c].x); l.setAttribute("y1", pos[c].y);
+      l.setAttribute("x2", pos[m.id].x); l.setAttribute("y2", pos[m.id].y);
+      l.setAttribute("class", esPuente ? "arista-top" : "arista");
+      svg.appendChild(l);
+    }
+  }
+
+  // === Nodos ===
+  for (const m of PLAN.materias) {
+    const estaAprobada = aprobadasSet.has(m.id);
+    const habilitada = esHabilitada(m, aprobadasSet);
+    const p = pesos[m.id]?.p_aprobar;
+
+    const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    g.setAttribute("class", "nodo");
+
+    const c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    c.setAttribute("cx", pos[m.id].x); c.setAttribute("cy", pos[m.id].y);
+    c.setAttribute("r", 26);
+
+    if (estaAprobada) {
+      c.setAttribute("fill", "#525252"); c.setAttribute("opacity", "0.75");
+    } else if (habilitada) {
+      c.setAttribute("fill", p === undefined ? "#525252" : colorProb(p));
+      c.setAttribute("opacity", "1");
+    } else {
+      c.setAttribute("fill", "#000");
+      c.setAttribute("stroke", "#262626");
+      c.setAttribute("stroke-width", "1.5");
+      c.setAttribute("opacity", "0.7");
+    }
+
+    let tooltip = m.nombre;
+    if (estaAprobada) tooltip += " (ya aprobada)";
+    else if (habilitada && p !== undefined) tooltip += ` — P(aprobar) = ${(p*100).toFixed(1)}%`;
+    else if (!habilitada) {
+      const faltan = m.correlativas.filter(cc => !aprobadasSet.has(cc));
+      tooltip += ` (bloqueada: falta ${faltan.join(", ")})`;
+    }
+    const title = document.createElementNS("http://www.w3.org/2000/svg", "title");
+    title.textContent = tooltip;
+    c.appendChild(title);
+
+    const t = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    t.setAttribute("x", pos[m.id].x); t.setAttribute("y", pos[m.id].y + 4);
+    t.setAttribute("text-anchor", "middle");
+    t.setAttribute("fill", habilitada || estaAprobada ? "#fff" : "#525252");
+    t.textContent = m.id;
+
+    g.appendChild(c); g.appendChild(t);
+    svg.appendChild(g);
+  }
+}
+
+async function calcular() {
+  const notas = parseNotas(document.getElementById("notas").value);
+  const aprobadasList = Object.keys(notas);
+  const body = {
+    notas,
+    cant_materias_cursando_simultaneo: parseInt(document.getElementById("simult").value),
+    es_recursada: parseInt(document.getElementById("recursada").value),
+  };
+
+  try {
+    const [pesos, sec] = await Promise.all([
+      fetch(`${API}/api/pesos`, { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify(body) }).then(r => r.json()),
+      fetch(`${API}/api/secuencia`, { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify(body) }).then(r => r.json()),
+    ]);
+
+    dibujar(pesos, aprobadasList, sec.secuencia);
+
+    const contenedor = document.getElementById("secuencia");
+    contenedor.innerHTML = "<strong>Secuencia sugerida:</strong>";
+    const ul = document.createElement("ol");
+
+    sec.secuencia.slice(0, 20).forEach(id => {
+      const p = pesos[id]?.p_aprobar;
+      const li = document.createElement("li");
+      const span = document.createElement("span");
+      span.innerHTML = `<strong>${id}</strong> — riesgo ${sec.distancias[id].toFixed(2)}`
+        + (p !== undefined ? ` · P=${(p * 100).toFixed(0)}%` : "");
+      li.appendChild(span);
+
+      const btn = document.createElement("button");
+      btn.textContent = "Aprobar (7)";
+      btn.onclick = () => {
+        const nuevas = { ...notas };
+        nuevas[id] = 7;
+        document.getElementById("notas").value =
+          Object.entries(nuevas).map(([k, v]) => `${k}:${v}`).join(", ");
+        calcular();
+      };
+      li.appendChild(btn);
+      ul.appendChild(li);
+    });
+    contenedor.appendChild(ul);
+  } catch (e) {
+    console.error(e);
+    alert("Hubo un error. Revisá la consola (F12).");
+  }
+}
+
+cargarPlan();
+</script>
+</body>
+</html>

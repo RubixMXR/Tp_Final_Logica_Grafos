@@ -8,3 +8,4 @@ __pycache__/
 ~$*
 backend/models/*.pkl
 backend/data/cursadas.csv
+*.tmp

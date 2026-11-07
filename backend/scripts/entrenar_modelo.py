@@ -22,7 +22,6 @@ num_feats = [
     "promedio_previo",
     "cant_materias_aprobadas_previas",
     "cant_materias_cursando_simultaneo",
-    "nota_promedio_correlativas",
     "nivel",
 ]
 cat_feats = ["es_recursada"]
