@@ -4,5 +4,7 @@ __pycache__/
 .ipynb_checkpoints/
 .env
 .DS_Store
+*.docx
+~$*
 backend/models/*.pkl
 backend/data/cursadas.csv
