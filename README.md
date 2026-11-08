@@ -1,7 +1,9 @@
 # Planificador Curricular — Trabajo Práctico Integrador
 
 **Grupo:** Matias Xavier Roveri y Manuel Slepoy
+
 **Carrera:** Ingeniería en Sistemas de Información (UTN FRRo)  
+
 **Tema:** Planificador curricular con Machine Learning y Teoría de Grafos.
 
 ## Descripción del Proyecto
