@@ -13,230 +13,85 @@
     color: #e5e5e5;
     min-height: 100vh;
   }
-  h2 {
-    color: #fff;
-    margin: 0 0 20px;
-    font-weight: 600;
-    font-size: 22px;
-    letter-spacing: -0.3px;
-  }
-  .layout {
-    display: grid;
-    grid-template-columns: 380px 1fr;
-    gap: 20px;
-  }
-  .panel {
-    background: #0a0a0a;
-    padding: 20px;
-    border-radius: 12px;
-    border: 1px solid #262626;
-  }
-  .panel h3 {
-    margin-top: 0;
-    color: #fff;
-    font-weight: 600;
-    font-size: 15px;
-    margin-bottom: 16px;
-  }
-  label {
-    display: block;
-    margin: 16px 0 6px;
-    font-size: 13px;
-    color: #a3a3a3;
-    font-weight: 500;
-  }
-  input, textarea {
-    width: 100%;
-    padding: 9px 12px;
-    font-family: inherit;
-    font-size: 14px;
-    background: #000;
-    color: #e5e5e5;
-    border: 1px solid #262626;
-    border-radius: 8px;
-  }
-  input:focus, textarea:focus {
-    outline: none;
-    border-color: #3b82f6;
-  }
-  textarea { resize: vertical; min-height: 84px; }
-  button {
-    width: 100%;
-    margin-top: 18px;
-    padding: 11px;
-    background: #3b82f6;
-    color: #fff;
-    border: 0;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 14px;
-  }
-  button:hover { background: #2563eb; }
-  .secuencia {
-    margin-top: 18px;
-    font-size: 13px;
-    max-height: 440px;
-    overflow-y: auto;
-    color: #d4d4d4;
-  }
-  .secuencia strong { color: #fff; }
-  .secuencia ol { padding-left: 22px; margin: 8px 0; }
-  .secuencia li {
-    margin: 4px 0;
-    padding: 8px 0;
-    border-bottom: 1px solid #262626;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
-  .secuencia li button {
-    width: auto;
-    margin: 0;
-    padding: 3px 10px;
-    font-size: 11px;
-    background: #059669;
-  }
-  .secuencia li button:hover { background: #047857; }
-  .secuencia li button.btn-desaprobar {
-    background: #dc2626;
-    margin-left: 4px;
-  }
-  .secuencia li button.btn-desaprobar:hover { background: #b91c1c; }
-  .secuencia .badge-ready {
-    display: inline-block;
-    font-size: 10px;
-    padding: 1px 6px;
-    border-radius: 4px;
-    background: #16a34a;
-    color: #fff;
-    font-weight: 700;
-    margin-left: 6px;
-    letter-spacing: 0.3px;
-  }
-  .secuencia .badge-later {
-    display: inline-block;
-    font-size: 10px;
-    padding: 1px 6px;
-    border-radius: 4px;
-    background: #262626;
-    color: #737373;
-    margin-left: 6px;
-  }
-  .secuencia .badge-recur {
-    display: inline-block;
-    font-size: 10px;
-    padding: 1px 6px;
-    border-radius: 4px;
-    background: #ca8a04;
-    color: #fff;
-    font-weight: 700;
-    margin-left: 6px;
-  }
+  h2 { color: #fff; margin: 0 0 20px; font-weight: 600; font-size: 22px; letter-spacing: -0.3px; }
+  .layout { display: grid; grid-template-columns: 400px 1fr; gap: 20px; }
+  .panel { background: #0a0a0a; padding: 20px; border-radius: 12px; border: 1px solid #262626; }
+  .panel h3 { margin-top: 0; color: #fff; font-weight: 600; font-size: 15px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+  
+  .list-container { display: flex; flex-direction: column; gap: 6px; max-height: 300px; overflow-y: auto; padding-right: 6px; }
+  .list-container::-webkit-scrollbar { width: 6px; }
+  .list-container::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
 
-  .arista {
-    stroke: #333;
-    stroke-width: 1;
-    opacity: 0.35;
-  }
-  .arista-top {
-    stroke: #3b82f6;
-    stroke-width: 2.5;
-    opacity: 0.95;
-  }
-  .nodo text {
-    font-size: 11px;
-    fill: #fff;
-    pointer-events: none;
-    font-weight: 700;
-  }
-  .leyenda {
-    margin-top: 16px;
-    font-size: 12px;
-    color: #737373;
-    line-height: 2;
-  }
-  .gradiente {
-    display: inline-block;
-    width: 180px;
-    height: 12px;
-    vertical-align: middle;
-    border-radius: 3px;
-    background: linear-gradient(to right,
-      hsl(0, 75%, 50%),
-      hsl(30, 75%, 50%),
-      hsl(60, 75%, 50%),
-      hsl(90, 75%, 50%),
-      hsl(120, 75%, 50%));
-    margin: 0 8px;
-    border: 1px solid #262626;
-  }
-  .badge {
-    display: inline-block;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    vertical-align: middle;
-    margin-right: 5px;
-    border: 1px solid #262626;
-  }
-  .ayuda { font-size: 11px; color: #525252; margin-top: 6px; }
-  code {
-    background: #171717;
-    padding: 1px 5px;
-    border-radius: 3px;
-    font-size: 12px;
-    color: #a3a3a3;
-  }
-  .reset {
-    background: transparent;
-    border: 1px solid #262626;
-    color: #a3a3a3;
-    font-size: 11px;
-    padding: 6px;
-    margin-top: 8px;
-  }
-  .reset:hover {
-    background: #171717;
-    color: #e5e5e5;
-  }
+  .materia-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: #171717; border-radius: 8px; border: 1px solid #262626; gap: 10px; }
+  .materia-info { flex: 1; font-size: 13px; }
+  .materia-info span { font-weight: 700; color: #fff; margin-right: 6px; }
+  .materia-info small { color: #888; font-size: 11px; display: block; margin-top: 2px; }
+  
+  input[type="number"] { width: 60px; padding: 4px 8px; font-size: 13px; background: #000; color: #fff; border: 1px solid #444; border-radius: 6px; text-align: center; }
+  input[type="number"]:focus { outline: none; border-color: #3b82f6; }
+  
+  .btn-add { background: #3b82f6; color: #fff; border: 0; border-radius: 6px; padding: 4px 12px; cursor: pointer; font-weight: 700; font-size: 13px; }
+  .btn-add:hover { background: #2563eb; }
+  .btn-add.recur { background: #ca8a04; }
+  .btn-add.recur:hover { background: #a16207; }
+  
+  .btn-del { background: transparent; color: #ef4444; border: 0; cursor: pointer; font-size: 16px; padding: 0 4px; }
+  .btn-del:hover { color: #dc2626; }
+
+  .resumen { margin-top: 18px; font-size: 13px; color: #d4d4d4; padding: 12px; background: #171717; border-radius: 8px; border: 1px solid #262626; }
+  .resumen strong { color: #fff; }
+  .resumen p { margin: 6px 0; }
+
+  .arista { stroke: #333; stroke-width: 1; opacity: 0.35; }
+  .arista-top { stroke: #3b82f6; stroke-width: 2.5; opacity: 0.95; }
+  .nodo text { font-size: 11px; fill: #fff; pointer-events: none; font-weight: 700; }
+  
+  .orden-badge { fill: #1d4ed8; stroke: #3b82f6; stroke-width: 1.5; }
+  .orden-texto { font-size: 10px; fill: #fff; font-weight: 700; text-anchor: middle; pointer-events: none; }
+
+  .leyenda { margin-top: 16px; font-size: 12px; color: #737373; line-height: 2; }
+  .gradiente { display: inline-block; width: 180px; height: 12px; vertical-align: middle; border-radius: 3px; background: linear-gradient(to right, hsl(0, 75%, 50%), hsl(30, 75%, 50%), hsl(60, 75%, 50%), hsl(90, 75%, 50%), hsl(120, 75%, 50%)); margin: 0 8px; border: 1px solid #262626; }
+  .badge { display: inline-block; width: 12px; height: 12px; border-radius: 50%; vertical-align: middle; margin-right: 5px; border: 1px solid #262626; }
+  
+  .divider { height: 1px; background: #262626; margin: 20px 0; }
 </style>
 </head>
 <body>
 <h2>Planificador Curricular — Ingeniería en Sistemas (UTN FRRo)</h2>
 <div class="layout">
   <div class="panel">
-    <h3>Historial del estudiante</h3>
-    <label>Notas de materias aprobadas (≥ 6 para aprobar)</label>
-    <textarea id="notas" placeholder="AMI:6, AGA:6, SPN:6, AED:6, ING1:6, MS:7"></textarea>
-    <div class="ayuda">Si una materia está repetida (ej: <code>FIS1:2, FIS1:6</code>), se toma como recursada y se usa la última nota.</div>
+    
+    <h3>Materias Cursadas <span id="promedio-display" style="font-size:12px; color:#a3a3a3; font-weight:400;"></span></h3>
+    <div class="list-container" id="lista-cursadas">
+      <!-- Se llena por JS -->
+    </div>
+    
+    <div class="divider"></div>
+    
+    <h3>Materias Habilitadas para Cursar</h3>
+    <div class="list-container" id="lista-habilitadas">
+      <!-- Se llena por JS -->
+    </div>
 
-    <label>Materias cursando simultáneo</label>
-    <input id="simult" type="number" value="3" min="1" max="10">
+    <div class="resumen" id="resumen-secuencia">
+      <!-- Se llena por JS -->
+    </div>
 
-    <button onclick="calcular()">Calcular secuencia</button>
-    <button class="reset" onclick="resetear()">Borrar historial guardado</button>
-    <div class="secuencia" id="secuencia">Presioná "Calcular secuencia" para empezar.</div>
   </div>
 
   <div class="panel">
     <h3>Grafo de correlatividades</h3>
     <svg id="grafo" width="100%" height="700" viewBox="0 0 1000 800" preserveAspectRatio="xMidYMid meet"></svg>
     <div class="leyenda">
-      <strong style="color:#e5e5e5;">Probabilidad de aprobar:</strong>
-      <span class="gradiente"></span>
-      0% → 100%
+      <strong style="color:#e5e5e5;">Probabilidad de aprobar:</strong> <span class="gradiente"></span> 0% → 100%
       <br>
-      <span class="badge" style="background:#525252;"></span> Ya aprobada
-      &nbsp;&nbsp;
-      <span class="badge" style="background:#000; border-color:#dc2626; border-width:2px;"></span> Desaprobada
-      &nbsp;&nbsp;
+      <span class="badge" style="background:#525252;"></span> Ya aprobada (≥6) &nbsp;&nbsp;
+      <span class="badge" style="background:#000; border-color:#dc2626; border-width:2px;"></span> Desaprobada (<6) &nbsp;&nbsp;
       <span class="badge" style="background:#000;"></span> Bloqueada
       <br>
-      <span style="display:inline-block;width:20px;height:2px;background:#3b82f6;vertical-align:middle;margin-right:6px;"></span>
-      Habilitadas que sirven para desbloquear otras
+      <span style="display:inline-block;width:20px;height:2px;background:#3b82f6;vertical-align:middle;margin-right:6px;"></span> Habilitadas que sirven para desbloquear otras
+      <br>
+      <span style="display:inline-block;width:20px;height:20px;background:#1d4ed8;border-radius:50%;vertical-align:middle;margin-right:6px;text-align:center;line-height:20px;font-size:11px;font-weight:700;">1</span> Orden de cursada recomendado
     </div>
   </div>
 </div>
@@ -245,53 +100,145 @@
 const API = "http://127.0.0.1:8000";
 const ELECTIVAS = new Set(["ELEC3", "ELEC4", "ELEC5"]);
 let PLAN = null;
-
-function parseNotas(str) {
-  const notas = {};
-  const recursadas = new Set();
-  str.split(",").forEach(par => {
-    const [mid, val] = par.split(":").map(s => s.trim());
-    if (mid && val && !isNaN(parseFloat(val))) {
-      if (mid in notas) recursadas.add(mid);
-      notas[mid] = parseFloat(val);
-    }
-  });
-  return { notas, recursadas: Array.from(recursadas) };
-}
-
-function cargarEstado() {
-  const notas = localStorage.getItem("notas");
-  const simult = localStorage.getItem("simult");
-  if (notas !== null) document.getElementById("notas").value = notas;
-  if (simult !== null) document.getElementById("simult").value = simult;
-}
-
-function guardarEstado() {
-  localStorage.setItem("notas", document.getElementById("notas").value);
-  localStorage.setItem("simult", document.getElementById("simult").value);
-}
-
-function resetear() {
-  localStorage.removeItem("notas");
-  localStorage.removeItem("simult");
-  document.getElementById("notas").value = "";
-  document.getElementById("simult").value = "3";
-  document.getElementById("secuencia").innerHTML = "Presioná \"Calcular secuencia\" para empezar.";
-  if (PLAN) dibujar({}, {}, [], []);
-}
+let NOTAS = {};
+let RECURSADAS_HISTORIAL = new Set();
 
 async function cargarPlan() {
   try {
     const r = await fetch(`${API}/api/plan`);
     if (!r.ok) throw new Error("Error al cargar el plan");
     PLAN = await r.json();
-    dibujar({}, {}, [], []);
+    
+    const savedNotas = localStorage.getItem("notas_plan");
+    if (savedNotas) NOTAS = JSON.parse(savedNotas);
+    
+    const savedRecur = localStorage.getItem("recursadas_historial");
+    if (savedRecur) RECURSADAS_HISTORIAL = new Set(JSON.parse(savedRecur));
+    
+    renderizarInterfaz();
+    calcular();
   } catch (e) {
     console.error(e);
-    document.getElementById("grafo").innerHTML =
-      `<text x="50" y="50" fill="#ef4444" font-size="20">Error conectando al backend.</text>`;
+    document.getElementById("grafo").innerHTML = `<text x="50" y="50" fill="#ef4444" font-size="20">Error conectando al backend.</text>`;
   }
 }
+
+function renderizarInterfaz() {
+  if (!PLAN) return;
+
+  // --- 1. LISTA CURSADAS ---
+  const listaCursadas = document.getElementById("lista-cursadas");
+  listaCursadas.innerHTML = "";
+  
+  const idsCursadas = Object.keys(NOTAS);
+  let sumaNotas = 0;
+  
+  if (idsCursadas.length === 0) {
+    listaCursadas.innerHTML = '<div style="color:#555; font-size:12px; padding:10px 0;">Aún no cargaste ninguna materia.</div>';
+  } else {
+    idsCursadas.sort().forEach(id => {
+      const m = PLAN.materias.find(x => x.id === id);
+      if (!m) return;
+      const nota = NOTAS[id];
+      sumaNotas += nota;
+      
+      const div = document.createElement("div");
+      div.className = "materia-row";
+      
+      const info = document.createElement("div");
+      info.className = "materia-info";
+      const esRecur = RECURSADAS_HISTORIAL.has(id) ? " · RECURSADA" : "";
+      info.innerHTML = `<span>${id}</span> ${m.nombre} <small>Nivel ${m.nivel}${esRecur}</small>`;
+      
+      const input = document.createElement("input");
+      input.type = "number";
+      input.min = 1;
+      input.max = 10;
+      input.value = nota;
+      input.onchange = (e) => {
+        let val = parseFloat(e.target.value);
+        if (isNaN(val)) val = 7;
+        val = Math.max(1, Math.min(10, val));
+        NOTAS[id] = val;
+        if (val < 6) RECURSADAS_HISTORIAL.add(id);
+        guardarEstado();
+        renderizarInterfaz();
+        calcular();
+      };
+      
+      const btn = document.createElement("button");
+      btn.className = "btn-del";
+      btn.innerHTML = "✕";
+      btn.title = "Eliminar materia";
+      btn.onclick = () => {
+        delete NOTAS[id];
+        RECURSADAS_HISTORIAL.delete(id);
+        guardarEstado();
+        renderizarInterfaz();
+        calcular();
+      };
+      
+      div.appendChild(info);
+      div.appendChild(input);
+      div.appendChild(btn);
+      listaCursadas.appendChild(div);
+    });
+  }
+  
+  if (idsCursadas.length > 0) {
+    document.getElementById("promedio-display").innerText = `(Promedio: ${(sumaNotas/idsCursadas.length).toFixed(2)})`;
+  } else {
+    document.getElementById("promedio-display").innerText = "";
+  }
+
+  // --- 2. LISTA HABILITADAS ---
+  const listaHabilitadas = document.getElementById("lista-habilitadas");
+  listaHabilitadas.innerHTML = "";
+  
+  const habilitadas = PLAN.materias.filter(m => {
+    const nota = NOTAS[m.id];
+    if (nota !== undefined && nota >= 6) return false;
+    return m.correlativas.every(c => NOTAS[c] !== undefined && NOTAS[c] >= 6);
+  });
+  
+  if (habilitadas.length === 0) {
+    listaHabilitadas.innerHTML = '<div style="color:#555; font-size:12px; padding:10px 0;">No hay materias habilitadas. Aprobá más correlativas.</div>';
+  } else {
+    habilitadas.sort((a, b) => a.nivel - b.nivel || a.id.localeCompare(b.id));
+    
+    habilitadas.forEach(m => {
+      const div = document.createElement("div");
+      div.className = "materia-row";
+      
+      const info = document.createElement("div");
+      info.className = "materia-info";
+      
+      const esRecursada = NOTAS[m.id] !== undefined && NOTAS[m.id] < 6;
+      info.innerHTML = `<span>${m.id}</span> ${m.nombre} <small>Nivel ${m.nivel} ${esRecursada ? ' - ¡A recursar!' : ''}</small>`;
+      
+      const btn = document.createElement("button");
+      btn.className = esRecursada ? "btn-add recur" : "btn-add";
+      btn.textContent = esRecursada ? "+ Recursar" : "+ Cursar";
+      btn.onclick = () => {
+        NOTAS[m.id] = 7;
+        guardarEstado();
+        renderizarInterfaz();
+        calcular();
+      };
+      
+      div.appendChild(info);
+      div.appendChild(btn);
+      listaHabilitadas.appendChild(div);
+    });
+  }
+}
+
+function guardarEstado() {
+  localStorage.setItem("notas_plan", JSON.stringify(NOTAS));
+  localStorage.setItem("recursadas_historial", JSON.stringify(Array.from(RECURSADAS_HISTORIAL)));
+}
+
+// --- LÓGICA DE GRAFO Y SECUENCIA ---
 
 function colorProb(p) {
   const clamp = Math.max(0, Math.min(1, p));
@@ -351,6 +298,11 @@ function dibujar(pesos, notas, secuencia, recursadas) {
     }
   }
 
+  const ordenMap = {};
+  secuencia.forEach((id, idx) => {
+    ordenMap[id] = idx + 1;
+  });
+
   for (const m of PLAN.materias) {
     const notaInput = notas[m.id];
     const estaAprobada = aprobadasSet.has(m.id);
@@ -358,6 +310,7 @@ function dibujar(pesos, notas, secuencia, recursadas) {
     const esRecursada = recursadas.includes(m.id);
     const habilitada = esHabilitada(m, aprobadasSet);
     const p = pesos[m.id]?.p_aprobar;
+    const orden = ordenMap[m.id];
 
     const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
     g.setAttribute("class", "nodo");
@@ -389,15 +342,11 @@ function dibujar(pesos, notas, secuencia, recursadas) {
     }
 
     let tooltip = m.nombre;
-    if (estaAprobada) {
-      tooltip += esRecursada ? " (aprobada, recursada)" : " (ya aprobada)";
-    } else if (estaDesaprobada) {
-      tooltip += esRecursada ? " (desaprobada, recursada)" : " (desaprobada)";
-    } else if (habilitada && p !== undefined) {
-      tooltip += ` — P(aprobar) = ${(p*100).toFixed(1)}%`;
-    } else if (!habilitada) {
-      tooltip += ` (bloqueada: falta ${m.correlativas.filter(cc => !aprobadasSet.has(cc)).join(", ")})`;
-    }
+    if (orden) tooltip += ` — Orden de cursada: #${orden}`;
+    if (estaAprobada) tooltip += esRecursada ? " (aprobada, recursada)" : " (ya aprobada)";
+    else if (estaDesaprobada) tooltip += esRecursada ? " (desaprobada, recursada)" : " (desaprobada)";
+    else if (habilitada && p !== undefined) tooltip += ` — P(aprobar) = ${(p*100).toFixed(1)}%`;
+    else if (!habilitada) tooltip += ` (bloqueada: falta ${m.correlativas.filter(cc => !aprobadasSet.has(cc)).join(", ")})`;
 
     const title = document.createElementNS("http://www.w3.org/2000/svg", "title");
     title.textContent = tooltip;
@@ -410,17 +359,37 @@ function dibujar(pesos, notas, secuencia, recursadas) {
     t.textContent = m.id;
 
     g.appendChild(c); g.appendChild(t);
+
+    if (orden) {
+      const badgeX = pos[m.id].x + 20;
+      const badgeY = pos[m.id].y - 20;
+      
+      const badge = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      badge.setAttribute("cx", badgeX);
+      badge.setAttribute("cy", badgeY);
+      badge.setAttribute("r", 10);
+      badge.setAttribute("class", "orden-badge");
+      
+      const badgeTexto = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      badgeTexto.setAttribute("x", badgeX);
+      badgeTexto.setAttribute("y", badgeY + 3);
+      badgeTexto.setAttribute("class", "orden-texto");
+      badgeTexto.textContent = orden;
+      
+      g.appendChild(badge);
+      g.appendChild(badgeTexto);
+    }
+
     svg.appendChild(g);
   }
 }
 
 async function calcular() {
-  guardarEstado();
-  const { notas, recursadas } = parseNotas(document.getElementById("notas").value);
+  const recursadasList = Array.from(RECURSADAS_HISTORIAL);
   const body = {
-    notas,
-    recursadas,
-    cant_materias_cursando_simultaneo: parseInt(document.getElementById("simult").value),
+    notas: NOTAS,
+    recursadas: recursadasList,
+    cant_materias_cursando_simultaneo: 4
   };
 
   try {
@@ -429,71 +398,25 @@ async function calcular() {
       fetch(`${API}/api/secuencia`, { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify(body) }).then(r => r.json()),
     ]);
 
-    dibujar(pesos, notas, sec.secuencia, recursadas);
+    dibujar(pesos, NOTAS, sec.secuencia, recursadasList);
 
-    const aprobadasSet = new Set(Object.entries(notas).filter(([_, n]) => n >= 6).map(([m, _]) => m));
-    const contenedor = document.getElementById("secuencia");
-    contenedor.innerHTML = "<strong>Secuencia sugerida:</strong>";
-    const ul = document.createElement("ol");
-
-    sec.secuencia.forEach(id => {
-      const m = PLAN.materias.find(x => x.id === id);
-      const listaParaCursar = m.correlativas.every(c => aprobadasSet.has(c));
-      const p = pesos[id]?.p_aprobar;
-      const li = document.createElement("li");
-      const span = document.createElement("span");
-      
-      const badge = listaParaCursar
-        ? `<span class="badge-ready">LISTO YA</span>`
-        : `<span class="badge-later">después</span>`;
-      
-      const esRecur = recursadas.includes(id) ? `<span class="badge-recur">RECURSAR</span>` : "";
-
-      span.innerHTML = `<strong>${id}</strong> — riesgo ${sec.distancias[id].toFixed(2)}`
-        + (p !== undefined ? ` · P=${(p * 100).toFixed(0)}%` : "") + badge + esRecur;
-      li.appendChild(span);
-
-      if (listaParaCursar) {
-        const btnAprobar = document.createElement("button");
-        btnAprobar.textContent = "Aprobar (7)";
-        btnAprobar.onclick = () => {
-          const nuevas = { ...notas };
-          nuevas[id] = 7;
-          const recursadasSet = new Set(recursadas);
-          recursadasSet.add(id);
-          document.getElementById("notas").value =
-            Object.entries(nuevas).map(([k, v]) => `${k}:${v}`).join(", ")
-            + (recursadasSet.has(id) ? `, ${id}:7` : "");
-          calcular();
-        };
-        li.appendChild(btnAprobar);
-
-        const btnDesaprobar = document.createElement("button");
-        btnDesaprobar.textContent = "Desaprobar (2)";
-        btnDesaprobar.className = "btn-desaprobar";
-        btnDesaprobar.onclick = () => {
-          const nuevas = { ...notas };
-          nuevas[id] = 2;
-          const recursadasSet = new Set(recursadas);
-          recursadasSet.add(id);
-          document.getElementById("notas").value =
-            Object.entries(nuevas).map(([k, v]) => `${k}:${v}`).join(", ")
-            + (recursadasSet.has(id) ? `, ${id}:2` : "");
-          calcular();
-        };
-        li.appendChild(btnDesaprobar);
-      }
-
-      ul.appendChild(li);
-    });
-    contenedor.appendChild(ul);
+    const resumen = document.getElementById("resumen-secuencia");
+    if (sec.secuencia.length === 0) {
+      resumen.innerHTML = "<p>No quedan materias pendientes. ¡Felicitaciones!</p>";
+    } else {
+      const enRiesgoAlto = sec.secuencia.filter(id => (pesos[id]?.p_aprobar ?? 1) < 0.6).length;
+      resumen.innerHTML = `
+        <p><strong>Materias pendientes:</strong> ${sec.secuencia.length}</p>
+        <p><strong>Riesgo total acumulado:</strong> ${sec.riesgo_total.toFixed(2)}</p>
+        <p><strong>Materias con P < 60%:</strong> ${enRiesgoAlto}</p>
+        <p style="color:#888; font-size:11px; margin-top:8px;">El orden recomendado está resaltado en el grafo con números azules.</p>
+      `;
+    }
   } catch (e) {
     console.error(e);
-    alert("Hubo un error. Revisá la consola (F12).");
   }
 }
 
-cargarEstado();
 cargarPlan();
 </script>
 </body>

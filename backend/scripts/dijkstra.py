@@ -36,12 +36,14 @@ def dijkstra(grafo, inicio):
                 heapq.heappush(pq, (nueva, v))
     return dist, prev
 
-def calcular_secuencia(perfil, aprobadas, notas=None):
+def calcular_secuencia(perfil, aprobadas, notas=None, recursadas=None):
     if notas is None:
         notas = {}
-        
+    if recursadas is None:
+        recursadas = []
+
     plan = cargar_plan()
-    pesos = construir_pesos(perfil)
+    pesos = construir_pesos(perfil, notas, recursadas)
     aprobadas_set = set(aprobadas)
     grafo = construir_grafo(plan, pesos, aprobadas_set)
     dist, prev = dijkstra(grafo, INICIO)

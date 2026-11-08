@@ -22,6 +22,8 @@ num_feats = [
     "promedio_previo",
     "cant_materias_aprobadas_previas",
     "cant_materias_cursando_simultaneo",
+    "nota_promedio_correlativas",
+    "cant_corr_recursadas",
     "nivel",
 ]
 cat_feats = ["es_recursada"]
@@ -58,5 +60,4 @@ joblib.dump(pipe, MODEL)
 METRICS.write_text(json.dumps(metricas, indent=2, ensure_ascii=False), encoding="utf-8")
 
 print(f"Modelo guardado en {MODEL}")
-print(f"Métricas guardadas en {METRICS}")
 print(json.dumps(metricas, indent=2))

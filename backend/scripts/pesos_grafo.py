@@ -12,6 +12,8 @@ NUM_FEATS = [
     "promedio_previo",
     "cant_materias_aprobadas_previas",
     "cant_materias_cursando_simultaneo",
+    "nota_promedio_correlativas",
+    "cant_corr_recursadas",
     "nivel",
 ]
 CAT_FEATS = ["es_recursada"]
@@ -20,26 +22,37 @@ EPS = 1e-6
 def cargar_plan():
     return json.load(open(PLAN, encoding="utf-8"))
 
-def armar_perfil_desde_notas(notas: dict, cant_simult: int, recursadas: list) -> dict:
+def armar_perfil_desde_notas(notas: dict, cant_simult: int) -> dict:
     promedio = float(np.mean(list(notas.values()))) if notas else 6.5
     aprobadas_prev = len([n for n in notas.values() if n >= 6])
-    
-    tiene_desaprobadas = any(n < 6 for n in notas.values())
-    es_recursada = 1 if (recursadas or tiene_desaprobadas) else 0
 
     return {
         "promedio_previo": promedio,
         "cant_materias_aprobadas_previas": aprobadas_prev,
         "cant_materias_cursando_simultaneo": cant_simult,
-        "es_recursada": es_recursada,
     }
 
-def predecir_probabilidades(perfil: dict, plan: dict):
+def predecir_probabilidades(perfil: dict, plan: dict, notas: dict, recursadas_set: set):
     modelo = joblib.load(MODEL)
     filas = []
     for m in plan["materias"]:
-        fila = {**perfil, "nivel": m["nivel"]}
+        mid = m["id"]
+        corrs = m["correlativas"]
+        notas_corr = [notas[c] for c in corrs if c in notas]
+        nota_corr = float(np.mean(notas_corr)) if notas_corr else perfil["promedio_previo"]
+
+        es_recur = 1 if (mid in recursadas_set or (mid in notas and notas[mid] < 6)) else 0
+        cant_corr_recur = sum(1 for c in corrs if c in recursadas_set)
+
+        fila = {
+            **perfil,
+            "nivel": m["nivel"],
+            "nota_promedio_correlativas": nota_corr,
+            "cant_corr_recursadas": cant_corr_recur,
+            "es_recursada": es_recur,
+        }
         filas.append(fila)
+
     X = pd.DataFrame(filas)[NUM_FEATS + CAT_FEATS]
     probs = modelo.predict_proba(X)[:, 1]
     return {m["id"]: float(p) for m, p in zip(plan["materias"], probs)}
@@ -47,9 +60,10 @@ def predecir_probabilidades(perfil: dict, plan: dict):
 def probabilidad_a_peso(p: float) -> float:
     return float(-np.log(max(p, EPS)))
 
-def construir_pesos(perfil: dict):
+def construir_pesos(perfil: dict, notas: dict, recursadas: list):
     plan = cargar_plan()
-    probs = predecir_probabilidades(perfil, plan)
+    recursadas_set = set(recursadas)
+    probs = predecir_probabilidades(perfil, plan, notas, recursadas_set)
     return {
         mid: {
             "p_aprobar": probs[mid],
@@ -57,11 +71,3 @@ def construir_pesos(perfil: dict):
         }
         for mid in probs
     }
-
-if __name__ == "__main__":
-    notas = {"AMI": 8, "AGA": 7, "SPN": 6, "AED": 9, "ING1": 8}
-    perfil = armar_perfil_desde_notas(notas, cant_simult=4, recursadas=[])
-    print("Perfil derivado:", perfil)
-    pesos = construir_pesos(perfil)
-    for mid, v in list(pesos.items())[:5]:
-        print(f"{mid}: P={v['p_aprobar']:.3f}  peso={v['peso']:.3f}")

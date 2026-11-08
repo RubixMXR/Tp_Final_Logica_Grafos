@@ -27,7 +27,6 @@ def armar(perfil_in: PerfilIn):
     perfil = armar_perfil_desde_notas(
         perfil_in.notas,
         perfil_in.cant_materias_cursando_simultaneo,
-        perfil_in.recursadas,
     )
     aprobadas = [m for m, n in perfil_in.notas.items() if n >= 6]
     return perfil, aprobadas
@@ -39,9 +38,9 @@ def get_plan():
 @app.post("/api/pesos")
 def post_pesos(perfil_in: PerfilIn):
     perfil, _ = armar(perfil_in)
-    return construir_pesos(perfil)
+    return construir_pesos(perfil, perfil_in.notas, perfil_in.recursadas)
 
 @app.post("/api/secuencia")
 def post_secuencia(perfil_in: PerfilIn):
     perfil, aprobadas = armar(perfil_in)
-    return calcular_secuencia(perfil, aprobadas, perfil_in.notas)
+    return calcular_secuencia(perfil, aprobadas, perfil_in.notas, perfil_in.recursadas)
