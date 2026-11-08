@@ -54,6 +54,9 @@
   .badge { display: inline-block; width: 12px; height: 12px; border-radius: 50%; vertical-align: middle; margin-right: 5px; border: 1px solid #262626; }
   
   .divider { height: 1px; background: #262626; margin: 20px 0; }
+  .config-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .config-row label { font-size: 13px; color: #a3a3a3; }
+  .config-row input { width: 80px; }
 </style>
 </head>
 <body>
@@ -63,18 +66,22 @@
     
     <h3>Materias Cursadas <span id="promedio-display" style="font-size:12px; color:#a3a3a3; font-weight:400;"></span></h3>
     <div class="list-container" id="lista-cursadas">
-      <!-- Se llena por JS -->
     </div>
     
     <div class="divider"></div>
     
     <h3>Materias Habilitadas para Cursar</h3>
     <div class="list-container" id="lista-habilitadas">
-      <!-- Se llena por JS -->
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="config-row">
+      <label>Materias cursando simultáneo (este cuatrimestre)</label>
+      <input id="simult" type="number" value="4" min="1" max="10">
     </div>
 
     <div class="resumen" id="resumen-secuencia">
-      <!-- Se llena por JS -->
     </div>
 
   </div>
@@ -114,6 +121,14 @@ async function cargarPlan() {
     
     const savedRecur = localStorage.getItem("recursadas_historial");
     if (savedRecur) RECURSADAS_HISTORIAL = new Set(JSON.parse(savedRecur));
+
+    const savedSimult = localStorage.getItem("simult");
+    if (savedSimult) document.getElementById("simult").value = savedSimult;
+    
+    document.getElementById("simult").onchange = () => {
+      localStorage.setItem("simult", document.getElementById("simult").value);
+      calcular();
+    };
     
     renderizarInterfaz();
     calcular();
@@ -126,7 +141,6 @@ async function cargarPlan() {
 function renderizarInterfaz() {
   if (!PLAN) return;
 
-  // --- 1. LISTA CURSADAS ---
   const listaCursadas = document.getElementById("lista-cursadas");
   listaCursadas.innerHTML = "";
   
@@ -191,7 +205,6 @@ function renderizarInterfaz() {
     document.getElementById("promedio-display").innerText = "";
   }
 
-  // --- 2. LISTA HABILITADAS ---
   const listaHabilitadas = document.getElementById("lista-habilitadas");
   listaHabilitadas.innerHTML = "";
   
@@ -237,8 +250,6 @@ function guardarEstado() {
   localStorage.setItem("notas_plan", JSON.stringify(NOTAS));
   localStorage.setItem("recursadas_historial", JSON.stringify(Array.from(RECURSADAS_HISTORIAL)));
 }
-
-// --- LÓGICA DE GRAFO Y SECUENCIA ---
 
 function colorProb(p) {
   const clamp = Math.max(0, Math.min(1, p));
@@ -299,9 +310,7 @@ function dibujar(pesos, notas, secuencia, recursadas) {
   }
 
   const ordenMap = {};
-  secuencia.forEach((id, idx) => {
-    ordenMap[id] = idx + 1;
-  });
+  secuencia.forEach((id, idx) => { ordenMap[id] = idx + 1; });
 
   for (const m of PLAN.materias) {
     const notaInput = notas[m.id];
@@ -363,21 +372,14 @@ function dibujar(pesos, notas, secuencia, recursadas) {
     if (orden) {
       const badgeX = pos[m.id].x + 20;
       const badgeY = pos[m.id].y - 20;
-      
       const badge = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-      badge.setAttribute("cx", badgeX);
-      badge.setAttribute("cy", badgeY);
-      badge.setAttribute("r", 10);
-      badge.setAttribute("class", "orden-badge");
-      
+      badge.setAttribute("cx", badgeX); badge.setAttribute("cy", badgeY);
+      badge.setAttribute("r", 10); badge.setAttribute("class", "orden-badge");
       const badgeTexto = document.createElementNS("http://www.w3.org/2000/svg", "text");
-      badgeTexto.setAttribute("x", badgeX);
-      badgeTexto.setAttribute("y", badgeY + 3);
+      badgeTexto.setAttribute("x", badgeX); badgeTexto.setAttribute("y", badgeY + 3);
       badgeTexto.setAttribute("class", "orden-texto");
       badgeTexto.textContent = orden;
-      
-      g.appendChild(badge);
-      g.appendChild(badgeTexto);
+      g.appendChild(badge); g.appendChild(badgeTexto);
     }
 
     svg.appendChild(g);
@@ -389,7 +391,7 @@ async function calcular() {
   const body = {
     notas: NOTAS,
     recursadas: recursadasList,
-    cant_materias_cursando_simultaneo: 4
+    cant_materias_cursando_simultaneo: parseInt(document.getElementById("simult").value) || 4
   };
 
   try {
