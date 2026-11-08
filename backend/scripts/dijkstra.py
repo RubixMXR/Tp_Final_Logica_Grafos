@@ -26,7 +26,8 @@ def dijkstra(grafo, inicio):
     pq = [(0.0, inicio)]
     while pq:
         d, u = heapq.heappop(pq)
-        if d > dist.get(u, float("inf")): continue
+        if d > dist.get(u, float("inf")):
+            continue
         for v, peso in grafo.get(u, []):
             nueva = d + peso
             if nueva < dist.get(v, float("inf")):
@@ -35,48 +36,41 @@ def dijkstra(grafo, inicio):
                 heapq.heappush(pq, (nueva, v))
     return dist, prev
 
-def calcular_secuencia(perfil, aprobadas):
+def calcular_secuencia(perfil, aprobadas, notas=None):
+    if notas is None:
+        notas = {}
+        
     plan = cargar_plan()
     pesos = construir_pesos(perfil)
     aprobadas_set = set(aprobadas)
     grafo = construir_grafo(plan, pesos, aprobadas_set)
-
     dist, prev = dijkstra(grafo, INICIO)
 
-    pendientes = []
-    for m in plan["materias"]:
-        mid = m["id"]
-        if mid in aprobadas_set or mid not in dist:
-            continue
+    materias_map = {m["id"]: m for m in plan["materias"]}
+    pendientes_pool = [mid for mid in dist if mid != INICIO and mid not in aprobadas_set]
 
-        # LA CORRECCIÓN: Validar que TODAS las correlativas estén aprobadas 
-        # O tengan una distancia menor (lo que significa que aparecen antes en la secuencia)
-        valid = True
-        for c in m["correlativas"]:
-            if c in aprobadas_set:
+    validas = set(aprobadas_set)
+    final = []
+
+    changed = True
+    while changed:
+        changed = False
+        for mid in sorted(pendientes_pool, key=lambda x: dist[x]):
+            if mid in validas or mid in final:
                 continue
-            if c in dist and dist[c] < dist[mid]:
-                continue
-            valid = False
-            break
+            m = materias_map[mid]
+            if all(c in validas for c in m["correlativas"]):
+                final.append(mid)
+                nota = notas.get(mid)
+                if nota is None or nota >= 6:
+                    validas.add(mid)
+                changed = True
 
-        if valid:
-            pendientes.append(mid)
-
-    pendientes.sort(key=lambda mid: dist[mid])
+    final.sort(key=lambda mid: dist[mid])
 
     return {
         "pesos": pesos,
-        "secuencia": pendientes,
-        "distancias": {mid: float(dist[mid]) for mid in pendientes},
-        "riesgo_total": float(sum(dist[mid] for mid in pendientes)),
+        "secuencia": final,
+        "distancias": {mid: float(dist[mid]) for mid in final},
+        "riesgo_total": float(sum(dist[mid] for mid in final)),
     }
-
-if __name__ == "__main__":
-    notas = {"AMI": 8, "AGA": 7, "SPN": 6, "AED": 9, "ING1": 8}
-    from pesos_grafo import armar_perfil_desde_notas
-    perfil = armar_perfil_desde_notas(notas, cant_simult=4, recursada=0)
-    res = calcular_secuencia(perfil, list(notas.keys()))
-    print("Secuencia corregida:")
-    for i, mid in enumerate(res["secuencia"][:10], 1):
-        print(f"  {i:2d}. {mid:5s}  riesgo = {res['distancias'][mid]:.3f}")

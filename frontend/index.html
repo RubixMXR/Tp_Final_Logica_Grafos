@@ -90,6 +90,7 @@
     align-items: center;
     justify-content: space-between;
     gap: 8px;
+    flex-wrap: wrap;
   }
   .secuencia li button {
     width: auto;
@@ -99,6 +100,41 @@
     background: #059669;
   }
   .secuencia li button:hover { background: #047857; }
+  .secuencia li button.btn-desaprobar {
+    background: #dc2626;
+    margin-left: 4px;
+  }
+  .secuencia li button.btn-desaprobar:hover { background: #b91c1c; }
+  .secuencia .badge-ready {
+    display: inline-block;
+    font-size: 10px;
+    padding: 1px 6px;
+    border-radius: 4px;
+    background: #16a34a;
+    color: #fff;
+    font-weight: 700;
+    margin-left: 6px;
+    letter-spacing: 0.3px;
+  }
+  .secuencia .badge-later {
+    display: inline-block;
+    font-size: 10px;
+    padding: 1px 6px;
+    border-radius: 4px;
+    background: #262626;
+    color: #737373;
+    margin-left: 6px;
+  }
+  .secuencia .badge-recur {
+    display: inline-block;
+    font-size: 10px;
+    padding: 1px 6px;
+    border-radius: 4px;
+    background: #ca8a04;
+    color: #fff;
+    font-weight: 700;
+    margin-left: 6px;
+  }
 
   .arista {
     stroke: #333;
@@ -154,6 +190,18 @@
     font-size: 12px;
     color: #a3a3a3;
   }
+  .reset {
+    background: transparent;
+    border: 1px solid #262626;
+    color: #a3a3a3;
+    font-size: 11px;
+    padding: 6px;
+    margin-top: 8px;
+  }
+  .reset:hover {
+    background: #171717;
+    color: #e5e5e5;
+  }
 </style>
 </head>
 <body>
@@ -161,17 +209,15 @@
 <div class="layout">
   <div class="panel">
     <h3>Historial del estudiante</h3>
-    <label>Notas de materias aprobadas</label>
-    <textarea id="notas">AMI:6, AGA:6, SPN:6, AED:6, ING1:6, MS:7</textarea>
-    <div class="ayuda">Formato: <code>MATERIA:NOTA</code>, separadas por coma.</div>
+    <label>Notas de materias aprobadas (≥ 6 para aprobar)</label>
+    <textarea id="notas" placeholder="AMI:6, AGA:6, SPN:6, AED:6, ING1:6, MS:7"></textarea>
+    <div class="ayuda">Si una materia está repetida (ej: <code>FIS1:2, FIS1:6</code>), se toma como recursada y se usa la última nota.</div>
 
     <label>Materias cursando simultáneo</label>
     <input id="simult" type="number" value="3" min="1" max="10">
 
-    <label>¿Recursando alguna? (0 = No, 1 = Sí)</label>
-    <input id="recursada" type="number" min="0" max="1" value="0">
-
     <button onclick="calcular()">Calcular secuencia</button>
+    <button class="reset" onclick="resetear()">Borrar historial guardado</button>
     <div class="secuencia" id="secuencia">Presioná "Calcular secuencia" para empezar.</div>
   </div>
 
@@ -185,12 +231,12 @@
       <br>
       <span class="badge" style="background:#525252;"></span> Ya aprobada
       &nbsp;&nbsp;
+      <span class="badge" style="background:#000; border-color:#dc2626; border-width:2px;"></span> Desaprobada
+      &nbsp;&nbsp;
       <span class="badge" style="background:#000;"></span> Bloqueada
       <br>
       <span style="display:inline-block;width:20px;height:2px;background:#3b82f6;vertical-align:middle;margin-right:6px;"></span>
       Habilitadas que sirven para desbloquear otras
-      <br>
-      <em style="color:#404040;">Colores sólo en materias habilitadas. Electivas al fondo de cada nivel.</em>
     </div>
   </div>
 </div>
@@ -202,11 +248,36 @@ let PLAN = null;
 
 function parseNotas(str) {
   const notas = {};
+  const recursadas = new Set();
   str.split(",").forEach(par => {
     const [mid, val] = par.split(":").map(s => s.trim());
-    if (mid && val && !isNaN(parseFloat(val))) notas[mid] = parseFloat(val);
+    if (mid && val && !isNaN(parseFloat(val))) {
+      if (mid in notas) recursadas.add(mid);
+      notas[mid] = parseFloat(val);
+    }
   });
-  return notas;
+  return { notas, recursadas: Array.from(recursadas) };
+}
+
+function cargarEstado() {
+  const notas = localStorage.getItem("notas");
+  const simult = localStorage.getItem("simult");
+  if (notas !== null) document.getElementById("notas").value = notas;
+  if (simult !== null) document.getElementById("simult").value = simult;
+}
+
+function guardarEstado() {
+  localStorage.setItem("notas", document.getElementById("notas").value);
+  localStorage.setItem("simult", document.getElementById("simult").value);
+}
+
+function resetear() {
+  localStorage.removeItem("notas");
+  localStorage.removeItem("simult");
+  document.getElementById("notas").value = "";
+  document.getElementById("simult").value = "3";
+  document.getElementById("secuencia").innerHTML = "Presioná \"Calcular secuencia\" para empezar.";
+  if (PLAN) dibujar({}, {}, [], []);
 }
 
 async function cargarPlan() {
@@ -214,7 +285,7 @@ async function cargarPlan() {
     const r = await fetch(`${API}/api/plan`);
     if (!r.ok) throw new Error("Error al cargar el plan");
     PLAN = await r.json();
-    dibujar({}, [], []);
+    dibujar({}, {}, [], []);
   } catch (e) {
     console.error(e);
     document.getElementById("grafo").innerHTML =
@@ -231,12 +302,12 @@ function esHabilitada(m, aprobadasSet) {
   return !aprobadasSet.has(m.id) && m.correlativas.every(c => aprobadasSet.has(c));
 }
 
-function dibujar(pesos, aprobadas, secuencia) {
+function dibujar(pesos, notas, secuencia, recursadas) {
   const svg = document.getElementById("grafo");
   svg.innerHTML = "";
   if (!PLAN) return;
 
-  const aprobadasSet = new Set(aprobadas);
+  const aprobadasSet = new Set(Object.entries(notas).filter(([_, n]) => n >= 6).map(([m, _]) => m));
   const ancho = 1000, alto = 800;
   const pos = {};
 
@@ -263,17 +334,13 @@ function dibujar(pesos, aprobadas, secuencia) {
     });
   }
 
-  // === Aristas ===
   for (const m of PLAN.materias) {
     for (const c of m.correlativas) {
       if (!pos[c] || !pos[m.id]) continue;
-      
       const cObj = PLAN.materias.find(x => x.id === c);
       const cHabilitada = cObj ? esHabilitada(cObj, aprobadasSet) : false;
       const mHabilitada = esHabilitada(m, aprobadasSet);
       const mAprobada = aprobadasSet.has(m.id);
-      
-      // Es azul si la correlativa está habilitada Y la materia destino está bloqueada
       const esPuente = cHabilitada && !mHabilitada && !mAprobada;
 
       const l = document.createElementNS("http://www.w3.org/2000/svg", "line");
@@ -284,9 +351,11 @@ function dibujar(pesos, aprobadas, secuencia) {
     }
   }
 
-  // === Nodos ===
   for (const m of PLAN.materias) {
+    const notaInput = notas[m.id];
     const estaAprobada = aprobadasSet.has(m.id);
+    const estaDesaprobada = notaInput !== undefined && notaInput < 6;
+    const esRecursada = recursadas.includes(m.id);
     const habilitada = esHabilitada(m, aprobadasSet);
     const p = pesos[m.id]?.p_aprobar;
 
@@ -298,7 +367,17 @@ function dibujar(pesos, aprobadas, secuencia) {
     c.setAttribute("r", 26);
 
     if (estaAprobada) {
-      c.setAttribute("fill", "#525252"); c.setAttribute("opacity", "0.75");
+      c.setAttribute("fill", "#525252");
+      if (esRecursada) {
+        c.setAttribute("stroke", "#ca8a04");
+        c.setAttribute("stroke-width", "3");
+      }
+      c.setAttribute("opacity", "0.75");
+    } else if (estaDesaprobada) {
+      c.setAttribute("fill", "#000");
+      c.setAttribute("stroke", "#dc2626");
+      c.setAttribute("stroke-width", "2.5");
+      c.setAttribute("opacity", "0.9");
     } else if (habilitada) {
       c.setAttribute("fill", p === undefined ? "#525252" : colorProb(p));
       c.setAttribute("opacity", "1");
@@ -310,12 +389,16 @@ function dibujar(pesos, aprobadas, secuencia) {
     }
 
     let tooltip = m.nombre;
-    if (estaAprobada) tooltip += " (ya aprobada)";
-    else if (habilitada && p !== undefined) tooltip += ` — P(aprobar) = ${(p*100).toFixed(1)}%`;
-    else if (!habilitada) {
-      const faltan = m.correlativas.filter(cc => !aprobadasSet.has(cc));
-      tooltip += ` (bloqueada: falta ${faltan.join(", ")})`;
+    if (estaAprobada) {
+      tooltip += esRecursada ? " (aprobada, recursada)" : " (ya aprobada)";
+    } else if (estaDesaprobada) {
+      tooltip += esRecursada ? " (desaprobada, recursada)" : " (desaprobada)";
+    } else if (habilitada && p !== undefined) {
+      tooltip += ` — P(aprobar) = ${(p*100).toFixed(1)}%`;
+    } else if (!habilitada) {
+      tooltip += ` (bloqueada: falta ${m.correlativas.filter(cc => !aprobadasSet.has(cc)).join(", ")})`;
     }
+
     const title = document.createElementNS("http://www.w3.org/2000/svg", "title");
     title.textContent = tooltip;
     c.appendChild(title);
@@ -323,7 +406,7 @@ function dibujar(pesos, aprobadas, secuencia) {
     const t = document.createElementNS("http://www.w3.org/2000/svg", "text");
     t.setAttribute("x", pos[m.id].x); t.setAttribute("y", pos[m.id].y + 4);
     t.setAttribute("text-anchor", "middle");
-    t.setAttribute("fill", habilitada || estaAprobada ? "#fff" : "#525252");
+    t.setAttribute("fill", habilitada || estaAprobada || estaDesaprobada ? "#fff" : "#525252");
     t.textContent = m.id;
 
     g.appendChild(c); g.appendChild(t);
@@ -332,12 +415,12 @@ function dibujar(pesos, aprobadas, secuencia) {
 }
 
 async function calcular() {
-  const notas = parseNotas(document.getElementById("notas").value);
-  const aprobadasList = Object.keys(notas);
+  guardarEstado();
+  const { notas, recursadas } = parseNotas(document.getElementById("notas").value);
   const body = {
     notas,
+    recursadas,
     cant_materias_cursando_simultaneo: parseInt(document.getElementById("simult").value),
-    es_recursada: parseInt(document.getElementById("recursada").value),
   };
 
   try {
@@ -346,30 +429,61 @@ async function calcular() {
       fetch(`${API}/api/secuencia`, { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify(body) }).then(r => r.json()),
     ]);
 
-    dibujar(pesos, aprobadasList, sec.secuencia);
+    dibujar(pesos, notas, sec.secuencia, recursadas);
 
+    const aprobadasSet = new Set(Object.entries(notas).filter(([_, n]) => n >= 6).map(([m, _]) => m));
     const contenedor = document.getElementById("secuencia");
     contenedor.innerHTML = "<strong>Secuencia sugerida:</strong>";
     const ul = document.createElement("ol");
 
-    sec.secuencia.slice(0, 20).forEach(id => {
+    sec.secuencia.forEach(id => {
+      const m = PLAN.materias.find(x => x.id === id);
+      const listaParaCursar = m.correlativas.every(c => aprobadasSet.has(c));
       const p = pesos[id]?.p_aprobar;
       const li = document.createElement("li");
       const span = document.createElement("span");
+      
+      const badge = listaParaCursar
+        ? `<span class="badge-ready">LISTO YA</span>`
+        : `<span class="badge-later">después</span>`;
+      
+      const esRecur = recursadas.includes(id) ? `<span class="badge-recur">RECURSAR</span>` : "";
+
       span.innerHTML = `<strong>${id}</strong> — riesgo ${sec.distancias[id].toFixed(2)}`
-        + (p !== undefined ? ` · P=${(p * 100).toFixed(0)}%` : "");
+        + (p !== undefined ? ` · P=${(p * 100).toFixed(0)}%` : "") + badge + esRecur;
       li.appendChild(span);
 
-      const btn = document.createElement("button");
-      btn.textContent = "Aprobar (7)";
-      btn.onclick = () => {
-        const nuevas = { ...notas };
-        nuevas[id] = 7;
-        document.getElementById("notas").value =
-          Object.entries(nuevas).map(([k, v]) => `${k}:${v}`).join(", ");
-        calcular();
-      };
-      li.appendChild(btn);
+      if (listaParaCursar) {
+        const btnAprobar = document.createElement("button");
+        btnAprobar.textContent = "Aprobar (7)";
+        btnAprobar.onclick = () => {
+          const nuevas = { ...notas };
+          nuevas[id] = 7;
+          const recursadasSet = new Set(recursadas);
+          recursadasSet.add(id);
+          document.getElementById("notas").value =
+            Object.entries(nuevas).map(([k, v]) => `${k}:${v}`).join(", ")
+            + (recursadasSet.has(id) ? `, ${id}:7` : "");
+          calcular();
+        };
+        li.appendChild(btnAprobar);
+
+        const btnDesaprobar = document.createElement("button");
+        btnDesaprobar.textContent = "Desaprobar (2)";
+        btnDesaprobar.className = "btn-desaprobar";
+        btnDesaprobar.onclick = () => {
+          const nuevas = { ...notas };
+          nuevas[id] = 2;
+          const recursadasSet = new Set(recursadas);
+          recursadasSet.add(id);
+          document.getElementById("notas").value =
+            Object.entries(nuevas).map(([k, v]) => `${k}:${v}`).join(", ")
+            + (recursadasSet.has(id) ? `, ${id}:2` : "");
+          calcular();
+        };
+        li.appendChild(btnDesaprobar);
+      }
+
       ul.appendChild(li);
     });
     contenedor.appendChild(ul);
@@ -379,6 +493,7 @@ async function calcular() {
   }
 }
 
+cargarEstado();
 cargarPlan();
 </script>
 </body>

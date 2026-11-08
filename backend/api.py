@@ -19,17 +19,17 @@ app.add_middleware(
 )
 
 class PerfilIn(BaseModel):
-    notas: dict[str, float] = {}   # materia_id -> nota
+    notas: dict[str, float] = {}
+    recursadas: list[str] = []
     cant_materias_cursando_simultaneo: int = 4
-    es_recursada: int = 0
 
 def armar(perfil_in: PerfilIn):
     perfil = armar_perfil_desde_notas(
         perfil_in.notas,
         perfil_in.cant_materias_cursando_simultaneo,
-        perfil_in.es_recursada,
+        perfil_in.recursadas,
     )
-    aprobadas = list(perfil_in.notas.keys())
+    aprobadas = [m for m, n in perfil_in.notas.items() if n >= 6]
     return perfil, aprobadas
 
 @app.get("/api/plan")
@@ -44,4 +44,4 @@ def post_pesos(perfil_in: PerfilIn):
 @app.post("/api/secuencia")
 def post_secuencia(perfil_in: PerfilIn):
     perfil, aprobadas = armar(perfil_in)
-    return calcular_secuencia(perfil, aprobadas)
+    return calcular_secuencia(perfil, aprobadas, perfil_in.notas)
