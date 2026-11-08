@@ -138,7 +138,7 @@ async function cargarPlan() {
   }
 }
 
-function renderizarInterfaz() {
+function renderizarInterfaz(pesos = {}) {
   if (!PLAN) return;
 
   const listaCursadas = document.getElementById("lista-cursadas");
@@ -227,7 +227,10 @@ function renderizarInterfaz() {
       info.className = "materia-info";
       
       const esRecursada = NOTAS[m.id] !== undefined && NOTAS[m.id] < 6;
-      info.innerHTML = `<span>${m.id}</span> ${m.nombre} <small>Nivel ${m.nivel} ${esRecursada ? ' - ¡A recursar!' : ''}</small>`;
+      const p = pesos[m.id]?.p_aprobar;
+      const pTexto = p !== undefined ? ` · P=${(p*100).toFixed(0)}%` : "";
+      
+      info.innerHTML = `<span>${m.id}</span> ${m.nombre} <small>Nivel ${m.nivel} ${esRecursada ? ' - ¡A recursar!' : ''}${pTexto}</small>`;
       
       const btn = document.createElement("button");
       btn.className = esRecursada ? "btn-add recur" : "btn-add";
@@ -352,10 +355,17 @@ function dibujar(pesos, notas, secuencia, recursadas) {
 
     let tooltip = m.nombre;
     if (orden) tooltip += ` — Orden de cursada: #${orden}`;
-    if (estaAprobada) tooltip += esRecursada ? " (aprobada, recursada)" : " (ya aprobada)";
-    else if (estaDesaprobada) tooltip += esRecursada ? " (desaprobada, recursada)" : " (desaprobada)";
-    else if (habilitada && p !== undefined) tooltip += ` — P(aprobar) = ${(p*100).toFixed(1)}%`;
-    else if (!habilitada) tooltip += ` (bloqueada: falta ${m.correlativas.filter(cc => !aprobadasSet.has(cc)).join(", ")})`;
+    
+    if (estaAprobada) {
+      tooltip += esRecursada ? " (aprobada, recursada)" : " (ya aprobada)";
+    } else if (estaDesaprobada) {
+      tooltip += esRecursada ? " (desaprobada, recursada)" : " (desaprobada)";
+      if (p !== undefined) tooltip += ` — P(aprobar si recursás) = ${(p*100).toFixed(1)}%`;
+    } else if (habilitada && p !== undefined) {
+      tooltip += ` — P(aprobar) = ${(p*100).toFixed(1)}%`;
+    } else if (!habilitada) {
+      tooltip += ` (bloqueada: falta ${m.correlativas.filter(cc => !aprobadasSet.has(cc)).join(", ")})`;
+    }
 
     const title = document.createElementNS("http://www.w3.org/2000/svg", "title");
     title.textContent = tooltip;
@@ -401,6 +411,7 @@ async function calcular() {
     ]);
 
     dibujar(pesos, NOTAS, sec.secuencia, recursadasList);
+    renderizarInterfaz(pesos);
 
     const resumen = document.getElementById("resumen-secuencia");
     if (sec.secuencia.length === 0) {

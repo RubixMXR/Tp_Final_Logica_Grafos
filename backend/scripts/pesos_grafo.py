@@ -13,7 +13,6 @@ NUM_FEATS = [
     "cant_materias_aprobadas_previas",
     "cant_materias_cursando_simultaneo",
     "nota_promedio_correlativas",
-    "cant_corr_recursadas",
     "nivel",
 ]
 CAT_FEATS = ["es_recursada"]
@@ -38,17 +37,23 @@ def predecir_probabilidades(perfil: dict, plan: dict, notas: dict, recursadas_se
     for m in plan["materias"]:
         mid = m["id"]
         corrs = m["correlativas"]
-        notas_corr = [notas[c] for c in corrs if c in notas]
-        nota_corr = float(np.mean(notas_corr)) if notas_corr else perfil["promedio_previo"]
+        
+        notas_ajustadas = []
+        for c in corrs:
+            if c in notas:
+                nota = notas[c]
+                if c in recursadas_set and nota >= 6:
+                    nota = nota - 1.5
+                notas_ajustadas.append(nota)
+        
+        nota_corr = float(np.mean(notas_ajustadas)) if notas_ajustadas else perfil["promedio_previo"]
 
         es_recur = 1 if (mid in recursadas_set or (mid in notas and notas[mid] < 6)) else 0
-        cant_corr_recur = sum(1 for c in corrs if c in recursadas_set)
 
         fila = {
             **perfil,
             "nivel": m["nivel"],
             "nota_promedio_correlativas": nota_corr,
-            "cant_corr_recursadas": cant_corr_recur,
             "es_recursada": es_recur,
         }
         filas.append(fila)

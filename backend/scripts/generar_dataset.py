@@ -22,7 +22,6 @@ for i in range(N_ESTUDIANTES):
     eid = f"E{i:04d}"
     promedio_previo = float(np.clip(rng.normal(6.5, 1.2), 2, 10))
     aprobadas = set()
-    recursadas = set()
 
     for nivel in range(1, 6):
         for m in por_nivel[nivel]:
@@ -40,15 +39,12 @@ for i in range(N_ESTUDIANTES):
             else:
                 nota_corr = promedio_previo
 
-            cant_corr_recursadas = sum(1 for c in m["correlativas"] if c in recursadas)
-
             logit = ( 0.9 * (promedio_previo - 6)
                     + 0.7 * (nota_corr - 6)
                     - 0.4 * (cant_simult - 4)
                     - 0.8 * recursada
                     + 0.05 * aprobadas_prev
-                    - 0.3 * (dificultad[m["id"]] - 5)
-                    - 0.5 * cant_corr_recursadas )
+                    - 0.3 * (dificultad[m["id"]] - 5) )
             p = 1.0 / (1.0 + np.exp(-logit))
 
             r = rng.random()
@@ -57,10 +53,8 @@ for i in range(N_ESTUDIANTES):
                 aprobadas.add(m["id"])
             elif r < p + 0.10 * (1 - p):
                 resultado = "abandonó"
-                recursadas.add(m["id"])
             else:
                 resultado = "desaprobó"
-                recursadas.add(m["id"])
 
             filas.append({
                 "estudiante_id": eid,
@@ -70,7 +64,6 @@ for i in range(N_ESTUDIANTES):
                 "cant_materias_aprobadas_previas": aprobadas_prev,
                 "cant_materias_cursando_simultaneo": cant_simult,
                 "nota_promedio_correlativas": round(nota_corr, 2),
-                "cant_corr_recursadas": cant_corr_recursadas,
                 "es_recursada": recursada,
                 "resultado": resultado,
             })
