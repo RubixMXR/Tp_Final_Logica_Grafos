@@ -24,6 +24,7 @@ num_feats = [
     "cant_materias_cursando_simultaneo",
     "nota_promedio_correlativas",
     "nivel",
+    "dificultad",
 ]
 cat_feats = ["es_recursada"]
 
@@ -40,7 +41,7 @@ pre = ColumnTransformer([
 ])
 pipe = Pipeline([
     ("pre", pre),
-    ("clf", LogisticRegression(max_iter=1000, class_weight="balanced")),
+    ("clf", LogisticRegression(max_iter=1000)), # Sin class_weight para no distorsionar probabilidades
 ])
 pipe.fit(Xtr, ytr)
 
