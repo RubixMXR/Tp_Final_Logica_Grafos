@@ -14,6 +14,7 @@ NUM_FEATS = [
     "cant_materias_cursando_simultaneo",
     "nota_promedio_correlativas",
     "nivel",
+    "dificultad",
 ]
 CAT_FEATS = ["es_recursada"]
 EPS = 1e-6
@@ -38,21 +39,24 @@ def predecir_probabilidades(perfil: dict, plan: dict, notas: dict, recursadas_se
         mid = m["id"]
         corrs = m["correlativas"]
         
+        # Buscamos las notas de las correlativas en el historial
         notas_ajustadas = []
         for c in corrs:
             if c in notas:
                 nota = notas[c]
                 if c in recursadas_set and nota >= 6:
-                    nota = nota - 1.5
+                    nota = nota - 1.5 # Penalización por recursar
                 notas_ajustadas.append(nota)
         
         nota_corr = float(np.mean(notas_ajustadas)) if notas_ajustadas else perfil["promedio_previo"]
 
+        # Chequeamos si la materia que va a cursar es recursada
         es_recur = 1 if (mid in recursadas_set or (mid in notas and notas[mid] < 6)) else 0
 
         fila = {
             **perfil,
             "nivel": m["nivel"],
+            "dificultad": m["dificultad"],
             "nota_promedio_correlativas": nota_corr,
             "es_recursada": es_recur,
         }

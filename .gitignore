@@ -1,11 +1,12 @@
 .venv/
 __pycache__/
 *.pyc
+*.tmp
+*.docx
 .ipynb_checkpoints/
 .env
 .DS_Store
-*.docx
 ~$*
 backend/models/*.pkl
 backend/data/cursadas.csv
-*.tmp
+Enunciado.pdf
